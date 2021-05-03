@@ -50,20 +50,27 @@ function App(): JSX.Element {
           isResting ? "bg-green-400" : "bg-red-400"
         }`}
       >
-        <p className="text-3xl text-white mb-4">{`${formatNumber(
-          minutes
-        )}:${formatNumber(seconds)}`}</p>
-        <button
-          className={`text-white px-2 rounded ${
-            isResting ? "bg-green-300" : "bg-red-300"
-          }`}
-          onClick={startTimer}
-        >
-          start!
-        </button>
+        <div className='flex items-center'>
+        <p className="text-8xl text-white mb-4" style={{ width: 110 }}>
+         {formatNumber(minutes)}
+        </p>
+        <p className='text-8xl text-white mb-4'>:</p>
+        <p className='text-8xl text-white mb-4' style={{ width: 110 }}>{formatNumber(seconds)}</p>
+        </div>
+        <div className='flex'>
+          <button
+            className={`text-white px-2 rounded px-10 py-2 outline-none ${
+              isResting ? "bg-green-300" : "bg-red-300"
+            }`}
+            onClick={startTimer}
+          >
+            start
+          </button>
+        </div>
       </div>
     </Fragment>
   );
 }
 
-export default App;
+
+export default App
