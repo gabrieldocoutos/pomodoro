@@ -38,7 +38,7 @@ function App(): JSX.Element {
       }
       setSeconds((prevSeconds) => (prevSeconds === 0 ? 59 : prevSeconds - 1));
     },
-    isPlaying ? 10 : null
+    isPlaying ? 1000 : null
   );
 
   return (
