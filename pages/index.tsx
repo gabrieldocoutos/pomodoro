@@ -1,5 +1,5 @@
 import { Fragment, useState } from "react";
-import Head from 'next/head';
+import Head from "next/head";
 
 import useInterval from "../useInterval";
 
@@ -51,14 +51,16 @@ function App(): JSX.Element {
           isResting ? "bg-green-400" : "bg-red-400"
         }`}
       >
-        <div className='flex items-center'>
-        <p className="text-8xl text-white mb-4" style={{ width: 110 }}>
-         {formatNumber(minutes)}
-        </p>
-        <p className='text-8xl text-white mb-4'>:</p>
-        <p className='text-8xl text-white mb-4' style={{ width: 110 }}>{formatNumber(seconds)}</p>
+        <div className="flex items-center">
+          <p className="text-8xl text-white mb-4" style={{ width: 110 }}>
+            {formatNumber(minutes)}
+          </p>
+          <p className="text-8xl text-white mb-4">:</p>
+          <p className="text-8xl text-white mb-4" style={{ width: 110 }}>
+            {formatNumber(seconds)}
+          </p>
         </div>
-        <div className='flex'>
+        <div className="flex">
           <button
             className={`text-white px-2 rounded px-10 py-2 outline-none ${
               isResting ? "bg-green-300" : "bg-red-300"
@@ -73,5 +75,4 @@ function App(): JSX.Element {
   );
 }
 
-
-export default App
+export default App;
