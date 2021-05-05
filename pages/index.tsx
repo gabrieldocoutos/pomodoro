@@ -1,4 +1,5 @@
 import { Fragment, useState } from "react";
+import Head from 'next/head';
 
 import useInterval from "../useInterval";
 
@@ -42,9 +43,9 @@ function App(): JSX.Element {
 
   return (
     <Fragment>
-      {/* <Helmet>
+      <Head>
         <title>{`${formatNumber(minutes)}:${formatNumber(seconds)}`}</title>
-      </Helmet> */}
+      </Head>
       <div
         className={`flex flex-col w-100 justify-center items-center h-screen ${
           isResting ? "bg-green-400" : "bg-red-400"
