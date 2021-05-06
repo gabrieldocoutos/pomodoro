@@ -22,4 +22,5 @@
 
 body {
   font-family: RobotoMono;
+  transition: background-color 0.5s ease;
 }

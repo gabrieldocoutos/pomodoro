@@ -3,6 +3,8 @@ import Head from "next/head";
 
 import useInterval from "../useInterval";
 
+import { Button } from "../components/Button";
+
 const formatNumber = (n: number): string => (n < 10 ? `0${n}` : n.toString());
 
 function App(): JSX.Element {
@@ -14,6 +16,24 @@ function App(): JSX.Element {
   const startTimer = () => {
     setMinutes(isResting ? 5 : 25);
     setIsPlaying(true);
+  };
+
+  const stopTimer = () => {
+    setIsPlaying(false);
+  };
+
+  const switchToPomodoro = () => {
+    setIsResting(false);
+    setIsPlaying(false);
+    setMinutes(25);
+    setSeconds(0);
+  };
+
+  const switchToRest = () => {
+    setIsResting(true);
+    setIsPlaying(false);
+    setMinutes(5);
+    setSeconds(0);
   };
 
   useInterval(
@@ -38,7 +58,7 @@ function App(): JSX.Element {
       }
       setSeconds((prevSeconds) => (prevSeconds === 0 ? 59 : prevSeconds - 1));
     },
-    isPlaying ? 1000 : null
+    isPlaying ? 1 : null
   );
 
   return (
@@ -49,26 +69,49 @@ function App(): JSX.Element {
       <div
         className={`flex flex-col w-100 justify-center items-center h-screen ${
           isResting ? "bg-green-400" : "bg-red-400"
-        }`}
+        } transition duration-500 ease-in-out`}
       >
+        <div className="flex">
+          <Button
+            disabled={!isResting}
+            className="mr-4 px-2"
+            onClick={switchToPomodoro}
+            variant={isResting ? "secondary" : "primary"}
+          >
+            pomodoro
+          </Button>
+          <Button
+            variant={isResting ? "secondary" : "primary"}
+            disabled={isResting}
+            className="px-2"
+            onClick={switchToRest}
+          >
+            rest
+          </Button>
+        </div>
         <div className="flex items-center">
-          <p className="text-8xl text-white mb-4" style={{ width: 110 }}>
+          <p
+            className="text-8xl leading-normal text-white mb-4"
+            style={{ width: 110 }}
+          >
             {formatNumber(minutes)}
           </p>
-          <p className="text-8xl text-white mb-4">:</p>
-          <p className="text-8xl text-white mb-4" style={{ width: 110 }}>
+          <p className="text-8xl leading-normal text-white mb-4">:</p>
+          <p
+            className="text-8xl leading-normal text-white mb-4"
+            style={{ width: 110 }}
+          >
             {formatNumber(seconds)}
           </p>
         </div>
         <div className="flex">
-          <button
-            className={`text-white px-2 rounded px-10 py-2 outline-none ${
-              isResting ? "bg-green-300" : "bg-red-300"
-            }`}
-            onClick={startTimer}
+          <Button
+            variant={isResting ? "secondary" : "primary"}
+            onClick={isPlaying ? stopTimer : startTimer}
+            className="h-10 w-24"
           >
-            start
-          </button>
+            {isPlaying ? "stop" : "start"}
+          </Button>
         </div>
       </div>
     </Fragment>
