@@ -12,20 +12,52 @@ function App(): JSX.Element {
   const [seconds, setSeconds] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isResting, setIsResting] = useState(false);
-
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.code === "Space") {
-      setIsPlaying((prevIsPlaying) => !prevIsPlaying);
-    }
-  };
+  const [
+    notificationPermissionGranted,
+    setNotificationPermissionGranted,
+  ] = useState(false);
 
   useEffect(() => {
+    checkNotificationPermission();
+
+    Notification.requestPermission((permissionCallback) => {
+      if (permissionCallback === "granted") {
+        setNotificationPermissionGranted(true);
+      }
+    });
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.code === "Space") {
+        setIsPlaying((prevIsPlaying) => !prevIsPlaying);
+      }
+    };
+
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 
+  const checkNotificationPermission = () => {
+    if (!("Notification" in window)) {
+      setNotificationPermissionGranted(false);
+      console.log("This browser does not support desktop notification");
+      return;
+    }
+
+    if (Notification.permission === "granted") {
+      setNotificationPermissionGranted(true);
+      return;
+    }
+
+    if (["denied", "default"].includes(Notification.permission)) {
+      Notification.requestPermission((permissionCallback) => {
+        if (permissionCallback === "granted") {
+          setNotificationPermissionGranted(true);
+        }
+      });
+    }
+  };
   const startTimer = () => {
     setMinutes(isResting ? 5 : 25);
     setIsPlaying(true);
@@ -58,7 +90,13 @@ function App(): JSX.Element {
           setIsResting(false);
           setMinutes(25);
           setSeconds(0);
+          if (notificationPermissionGranted) {
+            new Notification("your rest is over for now!");
+          }
         } else {
+          if (notificationPermissionGranted) {
+            new Notification("your work is over for now!");
+          }
           setMinutes(5);
           setSeconds(0);
           setIsResting(true);
