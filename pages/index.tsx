@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
 import Head from "next/head";
 
 import useInterval from "../useInterval";
@@ -12,6 +12,19 @@ function App(): JSX.Element {
   const [seconds, setSeconds] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isResting, setIsResting] = useState(false);
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.code === "Space") {
+      setIsPlaying((prevIsPlaying) => !prevIsPlaying);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   const startTimer = () => {
     setMinutes(isResting ? 5 : 25);
@@ -70,6 +83,7 @@ function App(): JSX.Element {
         className={`flex flex-col w-100 justify-center items-center h-screen ${
           isResting ? "bg-green-400" : "bg-red-400"
         } transition duration-500 ease-in-out`}
+        onKeyDown={(e) => console.log({ e })}
       >
         <div className="flex">
           <Button
@@ -109,6 +123,7 @@ function App(): JSX.Element {
             variant={isResting ? "secondary" : "primary"}
             onClick={isPlaying ? stopTimer : startTimer}
             className="h-10 w-24"
+            autoFocus={true}
           >
             {isPlaying ? "stop" : "start"}
           </Button>
