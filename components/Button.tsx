@@ -7,6 +7,7 @@ interface ButtonProps {
   variant?: "primary" | "secondary";
   onClick?: MouseEventHandler<HTMLButtonElement>;
   autoFocus?: boolean;
+  [x: string]: unknown;
 }
 
 const styleByVariant = (variant: ButtonProps["variant"]) => {
@@ -26,6 +27,7 @@ const Button = ({
   variant = "primary",
   onClick,
   autoFocus = false,
+  ...rest
 }: ButtonProps): JSX.Element => {
   const styles = `text-white rounded outline-none transition duration-500 ease-in-out disabled:opacity-50  ${styleByVariant(
     variant
@@ -37,6 +39,7 @@ const Button = ({
       disabled={disabled}
       className={styles + className}
       autoFocus={autoFocus}
+      {...rest}
     >
       {children}
     </button>

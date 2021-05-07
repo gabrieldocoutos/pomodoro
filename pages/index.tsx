@@ -27,7 +27,10 @@ function App(): JSX.Element {
     });
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.code === "Space") {
+      if (
+        event.code === "Space" &&
+        document?.activeElement?.id !== "start_button"
+      ) {
         setIsPlaying((prevIsPlaying) => !prevIsPlaying);
       }
     };
@@ -162,6 +165,7 @@ function App(): JSX.Element {
             onClick={isPlaying ? stopTimer : startTimer}
             className="h-10 w-24"
             autoFocus={true}
+            id="start_button"
           >
             {isPlaying ? "stop" : "start"}
           </Button>
