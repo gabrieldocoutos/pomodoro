@@ -92,7 +92,7 @@ function App(): JSX.Element {
       </Head>
       <div
         className={`flex flex-col w-100 justify-center items-center h-screen ${
-          isResting ? "bg-green-400" : "bg-red-400"
+          isResting ? "bg-gray-300" : "bg-gray-900"
         } transition duration-500 ease-in-out`}
         onKeyDown={(e) => console.log({ e })}
       >
@@ -116,14 +116,24 @@ function App(): JSX.Element {
         </div>
         <div className="flex items-center">
           <p
-            className="text-8xl leading-normal text-white mb-4"
+            className={`text-8xl leading-normal ${
+              isResting ? "text-gray-900" : "text-gray-100"
+            } mb-4`}
             style={{ width: 110 }}
           >
             {formatNumber(minutes)}
           </p>
-          <p className="text-8xl leading-normal text-white mb-4">:</p>
           <p
-            className="text-8xl leading-normal text-white mb-4"
+            className={`text-8xl leading-normal ${
+              isResting ? "text-gray-900" : "text-gray-100"
+            } mb-4`}
+          >
+            :
+          </p>
+          <p
+            className={`text-8xl leading-normal ${
+              isResting ? "text-gray-900" : "text-gray-100"
+            } mb-4`}
             style={{ width: 110 }}
           >
             {formatNumber(seconds)}

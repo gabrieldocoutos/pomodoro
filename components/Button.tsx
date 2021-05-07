@@ -14,9 +14,9 @@ const styleByVariant = (variant: ButtonProps["variant"]) => {
   switch (variant) {
     case "primary":
     default:
-      return "bg-red-300";
+      return "bg-gray-100 text-gray-900";
     case "secondary":
-      return "bg-green-300";
+      return "bg-gray-900 text-gray-100";
   }
 };
 
@@ -29,7 +29,7 @@ const Button = ({
   autoFocus = false,
   ...rest
 }: ButtonProps): JSX.Element => {
-  const styles = `text-white rounded outline-none transition duration-500 ease-in-out disabled:opacity-50  ${styleByVariant(
+  const styles = `rounded outline-none transition duration-500 ease-in-out disabled:opacity-80  ${styleByVariant(
     variant
   )} `;
 
