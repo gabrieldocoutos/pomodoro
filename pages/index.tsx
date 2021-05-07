@@ -20,12 +20,6 @@ function App(): JSX.Element {
   useEffect(() => {
     checkNotificationPermission();
 
-    Notification.requestPermission((permissionCallback) => {
-      if (permissionCallback === "granted") {
-        setNotificationPermissionGranted(true);
-      }
-    });
-
     const handleKeyDown = (event: KeyboardEvent) => {
       if (
         event.code === "Space" &&
@@ -60,6 +54,12 @@ function App(): JSX.Element {
         }
       });
     }
+
+    Notification.requestPermission((permissionCallback) => {
+      if (permissionCallback === "granted") {
+        setNotificationPermissionGranted(true);
+      }
+    });
   };
   const startTimer = () => {
     setMinutes(isResting ? 5 : 25);
