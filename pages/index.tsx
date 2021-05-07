@@ -94,7 +94,6 @@ function App(): JSX.Element {
         className={`flex flex-col w-100 justify-center items-center h-screen transition duration-500 ease-in-out ${
           isResting ? "bg-gray-300" : "bg-gray-900"
         }`}
-        onKeyDown={(e) => console.log({ e })}
       >
         <div className="flex">
           <Button

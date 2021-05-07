@@ -1,7 +1,8 @@
+import "../globals.css";
+import "../tailwind.scss";
 import { AppProps } from "next/app";
 
 import { NotificationProvider } from "../context/NotificationContext";
-import "../globals.css";
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   return (
