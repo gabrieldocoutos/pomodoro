@@ -4,6 +4,7 @@ import Head from "next/head";
 import useInterval from "../useInterval";
 
 import { Button } from "../components/Button";
+import { useNotification } from "../context/NotificationContext";
 
 const formatNumber = (n: number): string => (n < 10 ? `0${n}` : n.toString());
 
@@ -12,14 +13,13 @@ function App(): JSX.Element {
   const [seconds, setSeconds] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isResting, setIsResting] = useState(false);
-  const [
-    notificationPermissionGranted,
-    setNotificationPermissionGranted,
-  ] = useState(false);
+
+  const {
+    // browserNotificationPermissionGranted,
+    sendBrowserNotification,
+  } = useNotification();
 
   useEffect(() => {
-    checkNotificationPermission();
-
     const handleKeyDown = (event: KeyboardEvent) => {
       if (
         event.code === "Space" &&
@@ -35,32 +35,6 @@ function App(): JSX.Element {
     };
   }, []);
 
-  const checkNotificationPermission = () => {
-    if (!("Notification" in window)) {
-      setNotificationPermissionGranted(false);
-      console.log("This browser does not support desktop notification");
-      return;
-    }
-
-    if (Notification.permission === "granted") {
-      setNotificationPermissionGranted(true);
-      return;
-    }
-
-    if (["denied", "default"].includes(Notification.permission)) {
-      Notification.requestPermission((permissionCallback) => {
-        if (permissionCallback === "granted") {
-          setNotificationPermissionGranted(true);
-        }
-      });
-    }
-
-    Notification.requestPermission((permissionCallback) => {
-      if (permissionCallback === "granted") {
-        setNotificationPermissionGranted(true);
-      }
-    });
-  };
   const startTimer = () => {
     setMinutes(isResting ? 5 : 25);
     setIsPlaying(true);
@@ -93,13 +67,9 @@ function App(): JSX.Element {
           setIsResting(false);
           setMinutes(25);
           setSeconds(0);
-          if (notificationPermissionGranted) {
-            new Notification("your rest is over for now!");
-          }
+          sendBrowserNotification("your rest is over for now!");
         } else {
-          if (notificationPermissionGranted) {
-            new Notification("your work is over for now!");
-          }
+          sendBrowserNotification("your work is over for now!");
           setMinutes(5);
           setSeconds(0);
           setIsResting(true);

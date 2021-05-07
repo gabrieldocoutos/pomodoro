@@ -25,5 +25,6 @@ module.exports = {
     semi: 0,
     "@typescript-eslint/semi": ["error"],
     "@typescript-eslint/no-non-null-assertion": "off",
+    "react/prop-types": "off",
   },
 };
