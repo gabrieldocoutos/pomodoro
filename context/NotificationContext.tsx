@@ -39,12 +39,6 @@ const NotificationProvider: FC = ({ children }): JSX.Element => {
         }
       });
     }
-
-    Notification.requestPermission((permissionCallback) => {
-      if (permissionCallback === "granted") {
-        setBrowserNotificationPermissionGranted(true);
-      }
-    });
   };
 
   const sendBrowserNotification = (text: string) => {
