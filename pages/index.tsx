@@ -91,9 +91,9 @@ function App(): JSX.Element {
         <title>{`${formatNumber(minutes)}:${formatNumber(seconds)}`}</title>
       </Head>
       <div
-        className={`flex flex-col w-100 justify-center items-center h-screen ${
+        className={`flex flex-col w-100 justify-center items-center h-screen transition duration-500 ease-in-out ${
           isResting ? "bg-gray-300" : "bg-gray-900"
-        } transition duration-500 ease-in-out`}
+        }`}
         onKeyDown={(e) => console.log({ e })}
       >
         <div className="flex">
