@@ -82,7 +82,7 @@ function App(): JSX.Element {
       }
       setSeconds((prevSeconds) => (prevSeconds === 0 ? 59 : prevSeconds - 1));
     },
-    isPlaying ? 1 : null
+    isPlaying ? 10 : null
   );
 
   return (
