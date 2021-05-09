@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, useReducer } from "react";
 import Head from "next/head";
 
 import useInterval from "../useInterval";
@@ -6,13 +6,65 @@ import useInterval from "../useInterval";
 import { Button } from "../components/Button";
 import { useNotification } from "../context/NotificationContext";
 
+type Timer = {
+  minutes: number;
+  seconds: number;
+  isPlaying: boolean;
+  timerType: "pomodoro" | "resting";
+};
+
+type TimerAction = {
+  type:
+    | "start_timer"
+    | "stop_timer"
+    | "toggle_timer"
+    | "tick_minutes"
+    | "tick_seconds"
+    | "set_seconds"
+    | "switch_to_pomodoro"
+    | "switch_to_resting";
+  payload?: unknown;
+};
+
+const timerReducer = (state: Timer, action: TimerAction): Timer => {
+  switch (action.type) {
+    case "start_timer":
+      return {
+        ...state,
+        isPlaying: true,
+      };
+    case "stop_timer":
+      return { ...state, isPlaying: false };
+    case "toggle_timer":
+      return { ...state, isPlaying: !state.isPlaying };
+    case "tick_minutes":
+      return { ...state, minutes: state.minutes - 1 };
+    case "tick_seconds":
+      return {
+        ...state,
+        seconds: state.seconds === 0 ? 59 : state.seconds - 1,
+      };
+    case "switch_to_pomodoro":
+    default:
+      return timerInitialState;
+    case "switch_to_resting":
+      return { ...timerInitialState, timerType: "resting", minutes: 5 };
+  }
+};
+
+const timerInitialState: Timer = {
+  minutes: 25,
+  seconds: 0,
+  isPlaying: false,
+  timerType: "pomodoro",
+};
+
 const formatNumber = (n: number): string => (n < 10 ? `0${n}` : n.toString());
 
 function App(): JSX.Element {
-  const [minutes, setMinutes] = useState(25);
-  const [seconds, setSeconds] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isResting, setIsResting] = useState(false);
+  const [timer, dispatchTimer] = useReducer(timerReducer, timerInitialState);
+  const { seconds, minutes, isPlaying, timerType } = timer;
+  const isResting = timerType === "resting";
 
   const {
     // browserNotificationPermissionGranted,
@@ -25,7 +77,7 @@ function App(): JSX.Element {
         event.code === "Space" &&
         document?.activeElement?.id !== "start_button"
       ) {
-        setIsPlaying((prevIsPlaying) => !prevIsPlaying);
+        toggleTimer();
       }
     };
 
@@ -35,52 +87,29 @@ function App(): JSX.Element {
     };
   }, []);
 
-  const startTimer = () => {
-    setMinutes(isResting ? 5 : 25);
-    setIsPlaying(true);
-  };
+  const toggleTimer = () => dispatchTimer({ type: "toggle_timer" });
 
-  const stopTimer = () => {
-    setIsPlaying(false);
-  };
+  const switchToPomodoro = () => dispatchTimer({ type: "switch_to_pomodoro" });
 
-  const switchToPomodoro = () => {
-    setIsResting(false);
-    setIsPlaying(false);
-    setMinutes(25);
-    setSeconds(0);
-  };
-
-  const switchToRest = () => {
-    setIsResting(true);
-    setIsPlaying(false);
-    setMinutes(5);
-    setSeconds(0);
-  };
+  const switchToRest = () => dispatchTimer({ type: "switch_to_resting" });
 
   useInterval(
     () => {
       if (minutes === 0 && seconds === 0) {
-        setIsPlaying(false);
         if (isResting) {
-          setIsPlaying(false);
-          setIsResting(false);
-          setMinutes(25);
-          setSeconds(0);
+          dispatchTimer({ type: "switch_to_pomodoro" });
           sendBrowserNotification("your rest is over for now!");
         } else {
+          dispatchTimer({ type: "switch_to_resting" });
           sendBrowserNotification("your work is over for now!");
-          setMinutes(5);
-          setSeconds(0);
-          setIsResting(true);
         }
         return;
       }
 
       if (seconds === 0) {
-        setMinutes((prevMinutes) => prevMinutes - 1);
+        dispatchTimer({ type: "tick_minutes" });
       }
-      setSeconds((prevSeconds) => (prevSeconds === 0 ? 59 : prevSeconds - 1));
+      dispatchTimer({ type: "tick_seconds" });
     },
     isPlaying ? 10 : null
   );
@@ -141,7 +170,7 @@ function App(): JSX.Element {
         <div className="flex">
           <Button
             variant={isResting ? "secondary" : "primary"}
-            onClick={isPlaying ? stopTimer : startTimer}
+            onClick={toggleTimer}
             className="h-10 w-24"
             autoFocus={true}
             id="start_button"
