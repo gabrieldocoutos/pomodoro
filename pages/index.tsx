@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect, useReducer } from "react";
+import { Fragment, useEffect, useReducer } from "react";
 import Head from "next/head";
 
 import useInterval from "../useInterval";
@@ -77,7 +77,7 @@ function App(): JSX.Element {
         event.code === "Space" &&
         document?.activeElement?.id !== "start_button"
       ) {
-        toggleTimer();
+        dispatchTimer({ type: "toggle_timer" });
       }
     };
 
@@ -86,12 +86,6 @@ function App(): JSX.Element {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
-
-  const toggleTimer = () => dispatchTimer({ type: "toggle_timer" });
-
-  const switchToPomodoro = () => dispatchTimer({ type: "switch_to_pomodoro" });
-
-  const switchToRest = () => dispatchTimer({ type: "switch_to_resting" });
 
   useInterval(
     () => {
@@ -128,7 +122,7 @@ function App(): JSX.Element {
           <Button
             disabled={!isResting}
             className="mr-4 px-2"
-            onClick={switchToPomodoro}
+            onClick={() => dispatchTimer({ type: "switch_to_pomodoro" })}
             variant={isResting ? "secondary" : "primary"}
           >
             pomodoro
@@ -137,7 +131,7 @@ function App(): JSX.Element {
             variant={isResting ? "secondary" : "primary"}
             disabled={isResting}
             className="px-2"
-            onClick={switchToRest}
+            onClick={() => dispatchTimer({ type: "switch_to_resting" })}
           >
             rest
           </Button>
@@ -170,7 +164,7 @@ function App(): JSX.Element {
         <div className="flex">
           <Button
             variant={isResting ? "secondary" : "primary"}
-            onClick={toggleTimer}
+            onClick={() => dispatchTimer({ type: "toggle_timer" })}
             className="h-10 w-24"
             autoFocus={true}
             id="start_button"
