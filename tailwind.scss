@@ -9,3 +9,26 @@
 html {
   @apply antialiased;
 }
+
+@font-face {
+  font-family: RobotoMono;
+  src: url("public/RobotoMono-Regular.ttf");
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: RobotoMono;
+  src: url("public/RobotoMono-Bold.ttf");
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: RobotoMono;
+  src: url("public/RobotoMono-Light.ttf");
+  font-weight: 300;
+}
+
+body {
+  font-family: RobotoMono !important;
+  transition: background-color 0.5s ease;
+}

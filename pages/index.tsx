@@ -1,11 +1,12 @@
 import { Fragment, useEffect } from "react";
 import Head from "next/head";
 
-import useInterval from "../useInterval";
+import useInterval from "@/hooks/useInterval";
 
-import { Button } from "../components/Button";
-import { useNotification } from "../context/NotificationContext";
-import { useTimerContext } from "../context/TimerContext";
+import { Button } from "@/components/Button";
+
+import { useNotification } from "@/context/NotificationContext";
+import { useTimerContext } from "@/context/TimerContext";
 
 const formatNumber = (n: number): string => (n < 10 ? `0${n}` : n.toString());
 
