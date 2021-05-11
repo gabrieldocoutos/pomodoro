@@ -1,71 +1,25 @@
-import { Fragment, useEffect, useReducer } from "react";
+import { Fragment, useEffect } from "react";
 import Head from "next/head";
 
 import useInterval from "../useInterval";
 
 import { Button } from "../components/Button";
 import { useNotification } from "../context/NotificationContext";
-
-type Timer = {
-  minutes: number;
-  seconds: number;
-  isPlaying: boolean;
-  timerType: "pomodoro" | "resting";
-};
-
-type TimerAction = {
-  type:
-    | "start_timer"
-    | "stop_timer"
-    | "toggle_timer"
-    | "tick_minutes"
-    | "tick_seconds"
-    | "set_seconds"
-    | "switch_to_pomodoro"
-    | "switch_to_resting";
-  payload?: unknown;
-};
-
-const timerReducer = (state: Timer, action: TimerAction): Timer => {
-  switch (action.type) {
-    case "start_timer":
-      return {
-        ...state,
-        isPlaying: true,
-      };
-    case "stop_timer":
-      return { ...state, isPlaying: false };
-    case "toggle_timer":
-      return { ...state, isPlaying: !state.isPlaying };
-    case "tick_minutes":
-      return { ...state, minutes: state.minutes - 1 };
-    case "tick_seconds":
-      return {
-        ...state,
-        seconds: state.seconds === 0 ? 59 : state.seconds - 1,
-      };
-    case "switch_to_pomodoro":
-    default:
-      return timerInitialState;
-    case "switch_to_resting":
-      return { ...timerInitialState, timerType: "resting", minutes: 5 };
-  }
-};
-
-const timerInitialState: Timer = {
-  minutes: 25,
-  seconds: 0,
-  isPlaying: false,
-  timerType: "pomodoro",
-};
+import { useTimerContext } from "../context/TimerContext";
 
 const formatNumber = (n: number): string => (n < 10 ? `0${n}` : n.toString());
 
 function App(): JSX.Element {
-  const [timer, dispatchTimer] = useReducer(timerReducer, timerInitialState);
-  const { seconds, minutes, isPlaying, timerType } = timer;
-  const isResting = timerType === "resting";
-
+  const {
+    timer,
+    isResting,
+    toggleTimer,
+    switchToPomodoro,
+    switchToResting,
+    tickMinutes,
+    tickSeconds,
+  } = useTimerContext();
+  const { seconds, minutes, isPlaying } = timer;
   const {
     // browserNotificationPermissionGranted,
     sendBrowserNotification,
@@ -77,7 +31,7 @@ function App(): JSX.Element {
         event.code === "Space" &&
         document?.activeElement?.id !== "start_button"
       ) {
-        dispatchTimer({ type: "toggle_timer" });
+        toggleTimer();
       }
     };
 
@@ -91,19 +45,19 @@ function App(): JSX.Element {
     () => {
       if (minutes === 0 && seconds === 0) {
         if (isResting) {
-          dispatchTimer({ type: "switch_to_pomodoro" });
+          switchToPomodoro;
           sendBrowserNotification("your rest is over for now!");
         } else {
-          dispatchTimer({ type: "switch_to_resting" });
+          switchToResting();
           sendBrowserNotification("your work is over for now!");
         }
         return;
       }
 
       if (seconds === 0) {
-        dispatchTimer({ type: "tick_minutes" });
+        tickMinutes();
       }
-      dispatchTimer({ type: "tick_seconds" });
+      tickSeconds();
     },
     isPlaying ? 10 : null
   );
@@ -122,7 +76,7 @@ function App(): JSX.Element {
           <Button
             disabled={!isResting}
             className="mr-4 px-2"
-            onClick={() => dispatchTimer({ type: "switch_to_pomodoro" })}
+            onClick={() => switchToPomodoro()}
             variant={isResting ? "secondary" : "primary"}
           >
             pomodoro
@@ -131,7 +85,7 @@ function App(): JSX.Element {
             variant={isResting ? "secondary" : "primary"}
             disabled={isResting}
             className="px-2"
-            onClick={() => dispatchTimer({ type: "switch_to_resting" })}
+            onClick={() => switchToResting()}
           >
             rest
           </Button>
@@ -164,7 +118,7 @@ function App(): JSX.Element {
         <div className="flex">
           <Button
             variant={isResting ? "secondary" : "primary"}
-            onClick={() => dispatchTimer({ type: "toggle_timer" })}
+            onClick={() => toggleTimer()}
             className="h-10 w-24"
             autoFocus={true}
             id="start_button"
