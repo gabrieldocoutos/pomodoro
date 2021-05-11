@@ -1,4 +1,4 @@
-import { useContext, useReducer, createContext, FC, Dispatch } from "react";
+import { useContext, useReducer, createContext, FC } from "react";
 
 type Timer = {
   minutes: number;
