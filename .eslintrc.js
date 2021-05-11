@@ -26,5 +26,6 @@ module.exports = {
     "@typescript-eslint/semi": ["error"],
     "@typescript-eslint/no-non-null-assertion": "off",
     "react/prop-types": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
   },
 };
