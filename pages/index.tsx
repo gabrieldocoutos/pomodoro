@@ -45,7 +45,7 @@ function App(): JSX.Element {
     () => {
       if (minutes === 0 && seconds === 0) {
         if (isResting) {
-          switchToPomodoro;
+          switchToPomodoro();
           sendBrowserNotification("your rest is over for now!");
         } else {
           switchToResting();

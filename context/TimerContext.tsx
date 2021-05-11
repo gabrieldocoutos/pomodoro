@@ -29,13 +29,6 @@ export interface TimerContext {
 
 const timerReducer = (state: Timer, action: TimerAction): Timer => {
   switch (action.type) {
-    case "start_timer":
-      return {
-        ...state,
-        isPlaying: true,
-      };
-    case "stop_timer":
-      return { ...state, isPlaying: false };
     case "toggle_timer":
       return { ...state, isPlaying: !state.isPlaying };
     case "tick_minutes":
@@ -46,7 +39,6 @@ const timerReducer = (state: Timer, action: TimerAction): Timer => {
         seconds: state.seconds === 0 ? 59 : state.seconds - 1,
       };
     case "switch_to_pomodoro":
-    default:
       return {
         minutes: 25,
         seconds: 0,
@@ -55,6 +47,8 @@ const timerReducer = (state: Timer, action: TimerAction): Timer => {
       };
     case "switch_to_resting":
       return { seconds: 0, timerType: "resting", minutes: 5, isPlaying: false };
+    default:
+      return state;
   }
 };
 
