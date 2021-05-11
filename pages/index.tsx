@@ -12,18 +12,19 @@ const formatNumber = (n: number): string => (n < 10 ? `0${n}` : n.toString());
 function App(): JSX.Element {
   const {
     timer,
-    isResting,
     toggleTimer,
     switchToPomodoro,
     switchToResting,
-    tickMinutes,
-    tickSeconds,
+    subtractMinute,
+    subtractSecond,
   } = useTimerContext();
-  const { seconds, minutes, isPlaying } = timer;
+  const { seconds, minutes, isPlaying, timerType } = timer;
   const {
     // browserNotificationPermissionGranted,
     sendBrowserNotification,
   } = useNotification();
+
+  const isResting = timerType === "resting";
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -55,9 +56,9 @@ function App(): JSX.Element {
       }
 
       if (seconds === 0) {
-        tickMinutes();
+        subtractMinute();
       }
-      tickSeconds();
+      subtractSecond();
     },
     isPlaying ? 10 : null
   );

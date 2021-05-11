@@ -11,29 +11,19 @@ type TimerAction =
   | { type: "start_timer" }
   | { type: "stop_timer" }
   | { type: "toggle_timer" }
-  | { type: "tick_minutes" }
-  | { type: "tick_seconds" }
+  | { type: "subtract_minute" }
+  | { type: "subtract_second" }
   | { type: "set_seconds" }
   | { type: "switch_to_pomodoro" }
   | { type: "switch_to_resting" };
-
-export interface TimerContext {
-  timer: Timer;
-  isResting: boolean;
-  toggleTimer: () => void;
-  tickMinutes: () => void;
-  tickSeconds: () => void;
-  switchToPomodoro: () => void;
-  switchToResting: () => void;
-}
 
 const timerReducer = (state: Timer, action: TimerAction): Timer => {
   switch (action.type) {
     case "toggle_timer":
       return { ...state, isPlaying: !state.isPlaying };
-    case "tick_minutes":
+    case "subtract_minute":
       return { ...state, minutes: state.minutes - 1 };
-    case "tick_seconds":
+    case "subtract_second":
       return {
         ...state,
         seconds: state.seconds === 0 ? 59 : state.seconds - 1,
@@ -52,15 +42,16 @@ const timerReducer = (state: Timer, action: TimerAction): Timer => {
   }
 };
 
-const TimerContext = createContext<TimerContext | undefined>(undefined);
+interface TimerContext {
+  timer: Timer;
+  toggleTimer: () => void;
+  subtractMinute: () => void;
+  subtractSecond: () => void;
+  switchToPomodoro: () => void;
+  switchToResting: () => void;
+}
 
-const useTimerContext = () => {
-  const timerContext = useContext(TimerContext);
-  if (timerContext === undefined) {
-    throw new Error("useTimerContext must be within TimerProvider");
-  }
-  return timerContext;
-};
+const TimerContext = createContext<TimerContext | undefined>(undefined);
 
 const TimerProvider: FC = ({ children }) => {
   const [timer, dispatchTimer] = useReducer(timerReducer, {
@@ -70,13 +61,12 @@ const TimerProvider: FC = ({ children }) => {
     timerType: "pomodoro",
   });
   const { seconds, minutes, isPlaying, timerType } = timer;
-  const isResting = timerType === "resting";
 
   const toggleTimer = () => dispatchTimer({ type: "toggle_timer" });
 
-  const tickMinutes = () => dispatchTimer({ type: "tick_minutes" });
+  const subtractMinute = () => dispatchTimer({ type: "subtract_minute" });
 
-  const tickSeconds = () => dispatchTimer({ type: "tick_seconds" });
+  const subtractSecond = () => dispatchTimer({ type: "subtract_second" });
 
   const switchToPomodoro = () => dispatchTimer({ type: "switch_to_pomodoro" });
 
@@ -86,10 +76,9 @@ const TimerProvider: FC = ({ children }) => {
     <TimerContext.Provider
       value={{
         timer: { seconds, minutes, isPlaying, timerType },
-        isResting,
         toggleTimer,
-        tickMinutes,
-        tickSeconds,
+        subtractMinute,
+        subtractSecond,
         switchToPomodoro,
         switchToResting,
       }}
@@ -97,6 +86,14 @@ const TimerProvider: FC = ({ children }) => {
       {children}
     </TimerContext.Provider>
   );
+};
+
+const useTimerContext = () => {
+  const timerContext = useContext(TimerContext);
+  if (timerContext === undefined) {
+    throw new Error("useTimerContext must be within TimerProvider");
+  }
+  return timerContext;
 };
 
 export { TimerProvider, useTimerContext };
