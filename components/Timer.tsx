@@ -56,11 +56,14 @@ const timerReducer = (state: Timer, action: TimerAction): Timer => {
         ...state,
         seconds: 0,
         timerType: "resting",
-        minutes: 5,
+        minutes: state.focusCycles === 4 ? 15 : 5,
         isPlaying: false,
       };
     case "start_focus_cycle":
-      return { ...state, focusCycles: state.focusCycles++ };
+      return {
+        ...state,
+        focusCycles: state.focusCycles === 4 ? 1 : state.focusCycles + 1,
+      };
     default:
       return state;
   }
@@ -101,7 +104,7 @@ const Timer: FC = () => {
       if (minutes === 0 && seconds === 0) {
         if (isResting) {
           dispatchTimer({ type: "switch_to_pomodoro" });
-          // startFocusCycle();
+          dispatchTimer({ type: "start_focus_cycle" });
           sendBrowserNotification("your rest is over for now!");
         } else {
           dispatchTimer({ type: "switch_to_resting" });
@@ -115,7 +118,7 @@ const Timer: FC = () => {
       }
       dispatchTimer({ type: "subtract_second" });
     },
-    timer.isPlaying ? 10 : null
+    timer.isPlaying ? 1 : null
   );
 
   const { seconds, minutes, isPlaying, timerType, focusCycles } = timer;
