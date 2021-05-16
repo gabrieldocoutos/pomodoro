@@ -118,7 +118,7 @@ const Timer: FC = () => {
       }
       dispatchTimer({ type: "subtract_second" });
     },
-    timer.isPlaying ? 1 : null
+    timer.isPlaying ? 1000 : null
   );
 
   const { seconds, minutes, isPlaying, timerType, focusCycles } = timer;
